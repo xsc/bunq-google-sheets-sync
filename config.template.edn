@@ -1,0 +1,12 @@
+{:bunq
+ {:client-id "BUNQ_CLIENT_ID"
+  :client-secret "BUNQ_CLIENT_SECRET"}
+
+ :google
+ {:client-id "GOOGLE_CLIENT_ID"
+  :client-secret "GOOGLE_CLIENT_SECRET"
+  :redirect-uris ["URI 1" "URI 2"]}
+
+ :google-sheets
+ {:spreadsheet-id "SPREADSHEET_ID (from URL)"
+  :sheet-title    "TARGET_SHEET_TITLE"}}
