@@ -9,6 +9,7 @@
              CellFormat
              ExtendedValue
              GridCoordinate
+             GridRange
              NumberFormat
              Request
              RowData
@@ -81,6 +82,15 @@
                  (as-currency-cell amount)]))))
       (.setFields "userEnteredValue,userEnteredFormat"))))
 
+(defn- create-clear-request
+  ^UpdateCellsRequest
+  [sheet-id]
+  (doto (UpdateCellsRequest.)
+    (.setRange
+      (doto (GridRange.)
+        (.setSheetId sheet-id)))
+    (.setFields "*")))
+
 (defn- create-request
   ^Request
   [^UpdateCellsRequest update-request]
@@ -88,21 +98,22 @@
     (.setUpdateCells update-request)))
 
 (defn- execute-update!
-  [service {:keys [spreadsheet-id]} request]
+  [^Sheets service {:keys [spreadsheet-id]} requests]
   (-> service
       (.spreadsheets)
       (.batchUpdate
         spreadsheet-id
         (-> (BatchUpdateSpreadsheetRequest.)
-            (.setRequests [request])))
+            (.setRequests (map create-request requests))))
       (.execute)))
 
 (defn write-accounts!
   "Given Google credentials, and a map with `:spreadsheet-id` and `:sheet-title`,
-   update the sheet with rows of account name and balance."
+  update the sheet with rows of account name and balance."
   [ctx opts accounts]
   (let [service     (create-sheets-service ctx)
         spreadsheet (find-spreadsheet service opts)
-        sheet-id    (find-sheet-id spreadsheet opts)
-        request     (create-request (create-update-request sheet-id accounts))]
-    (execute-update! service opts request)))
+        sheet-id    (find-sheet-id spreadsheet opts)]
+    (->> [(create-clear-request sheet-id)
+          (create-update-request sheet-id accounts)]
+         (execute-update! service opts))))
