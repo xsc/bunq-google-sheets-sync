@@ -3,6 +3,8 @@
   (:import (com.google.api.client.auth.oauth2
              AuthorizationCodeFlow
              Credential)
+           (com.google.api.client.util.store
+             DataStore)
            (com.google.api.client.googleapis.javanet
              GoogleNetHttpTransport)
            (com.google.api.client.json.jackson2
@@ -25,6 +27,7 @@
 ;; ## Credential Store
 
 (defn create-credential-store
+  ^DataStore
   [path]
   (let [credential-file (io/file path)]
     (-> (FileDataStoreFactory.

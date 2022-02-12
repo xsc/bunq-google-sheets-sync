@@ -24,4 +24,5 @@
                  [aero "1.1.6"]]
   :repositories {"jitpack" {:url "https://jitpack.io"}}
   :main bunq-google-sheets-sync.core
+  :profiles {:dev {:global-vars {*warn-on-reflection* true}}}
   :pedantic? :abort)

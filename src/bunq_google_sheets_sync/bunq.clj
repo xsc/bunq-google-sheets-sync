@@ -14,7 +14,12 @@
            (com.google.api.client.util
              Data);
            (com.bunq.sdk.context ApiContext ApiEnvironmentType BunqContext)
-           (com.bunq.sdk.model.generated.endpoint MonetaryAccount)))
+           (com.bunq.sdk.model.generated.endpoint
+             MonetaryAccount
+             MonetaryAccountBank
+             MonetaryAccountExternal
+             MonetaryAccountJoint
+             MonetaryAccountSavings)))
 
 ;; ## OAuth
 
@@ -94,12 +99,32 @@
 
 ;; ## Endpoints
 
+(defprotocol Account
+  (get-status [this])
+  (get-name [this])
+  (get-balance [this]))
+
+(defmacro ^:private extend-account
+  [cls]
+  `(extend-protocol Account
+     ~cls
+     (~'get-status [this#]
+       (.getStatus this#))
+     (~'get-name [this#]
+       (.getDescription this#))
+     (~'get-balance [this#]
+       (.. this# getBalance getValue))))
+
+(extend-account MonetaryAccountBank)
+(extend-account MonetaryAccountExternal)
+(extend-account MonetaryAccountJoint)
+(extend-account MonetaryAccountSavings)
+
 (defn list-accounts
   [_]
-  (->> (for [record (.. (MonetaryAccount/list) (getValue))
+  (->> (for [^MonetaryAccount record (.. (MonetaryAccount/list) (getValue))
              :let [obj (.getReferencedObject record)]
-             :when (= "ACTIVE" (.getStatus obj))]
-         {:name   (.getDescription obj)
-          :amount (.. obj getBalance getValue)})
+             :when (= "ACTIVE" (get-status obj))]
+         {:name   (get-name obj)
+          :amount (get-balance obj)})
        (sort-by :name)))
-
