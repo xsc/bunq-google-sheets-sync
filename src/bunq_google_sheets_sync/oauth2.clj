@@ -2,7 +2,9 @@
   (:require [clojure.java.io :as io])
   (:import (com.google.api.client.auth.oauth2
              AuthorizationCodeFlow
-             Credential)
+             AuthorizationCodeFlow$Builder
+             Credential
+             DataStoreCredentialRefreshListener)
            (com.google.api.client.util.store
              DataStore)
            (com.google.api.client.googleapis.javanet
@@ -24,15 +26,31 @@
 (def +json+
   (JacksonFactory/getDefaultInstance))
 
+(def ^String +user+ "user")
+
 ;; ## Credential Store
 
-(defn create-credential-store
+(defn- create-credential-store
   ^DataStore
   [path]
   (let [credential-file (io/file path)]
     (-> (FileDataStoreFactory.
           (.getParentFile credential-file))
         (.getDataStore (.getName credential-file)))))
+
+(defn- create-refresh-listener
+  ^DataStoreCredentialRefreshListener
+  [^DataStore store]
+  (DataStoreCredentialRefreshListener. +user+ store))
+
+(defn set-credential-store
+  ^AuthorizationCodeFlow$Builder
+  [^AuthorizationCodeFlow$Builder builder path]
+  (let [store (create-credential-store path)
+        listener (create-refresh-listener store)]
+    (-> builder
+        (.setCredentialDataStore store)
+        (.addRefreshListener listener))))
 
 ;; ## Local Authorization
 
@@ -46,4 +64,4 @@
          (-> (LocalServerReceiver$Builder.)
              (.setPort (int port))
              (.build)))
-       (.authorize "user"))))
+       (.authorize +user+))))

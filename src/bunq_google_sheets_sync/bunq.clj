@@ -57,17 +57,16 @@
 (defn- create-authorization-flow
   ^AuthorizationCodeFlow
   [{:keys [client-id client-secret]}]
-  (let [store (oauth2/create-credential-store +bunq-credentials+)]
-    (-> (AuthorizationCodeFlow$Builder.
-          (BearerToken/authorizationHeaderAccessMethod)
-          oauth2/+transport+
-          oauth2/+json+
-          +bunq-token-url+
-          (create-query-authorization client-id client-secret)
-          client-id
-          +bunq-auth-url+)
-        (.setCredentialDataStore store)
-        (.build))))
+  (-> (AuthorizationCodeFlow$Builder.
+        (BearerToken/authorizationHeaderAccessMethod)
+        oauth2/+transport+
+        oauth2/+json+
+        +bunq-token-url+
+        (create-query-authorization client-id client-secret)
+        client-id
+        +bunq-auth-url+)
+      (oauth2/set-credential-store +bunq-credentials+)
+      (.build)))
 
 (defn- oauth-authorize!
   ^Credential

@@ -31,15 +31,14 @@
 (defn- create-authorization-flow
   ^GoogleAuthorizationCodeFlow
   [^GoogleClientSecrets secrets]
-  (let [store (oauth2/create-credential-store +google-credentials+)]
-    (-> (GoogleAuthorizationCodeFlow$Builder.
-          oauth2/+transport+
-          oauth2/+json+
-          secrets
-          +scopes+)
-        (.setAccessType "offline")
-        (.setCredentialDataStore store)
-        (.build))))
+  (-> (GoogleAuthorizationCodeFlow$Builder.
+        oauth2/+transport+
+        oauth2/+json+
+        secrets
+        +scopes+)
+      (.setAccessType "offline")
+      (oauth2/set-credential-store +google-credentials+)
+      (.build)))
 
 (defn authorize!
   "Given a map of `:client-id`, `:client-secret` and `:redirect-uris`, this
