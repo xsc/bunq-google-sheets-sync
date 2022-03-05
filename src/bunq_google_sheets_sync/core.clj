@@ -5,20 +5,27 @@
             [bunq-google-sheets-sync.google-sheets :as sheets]
             [aero.core :as aero]))
 
+(defn- fetch-accounts!
+  [{:keys [bunq]}]
+  (->> (bunq/authorize! bunq)
+       (bunq/list-accounts)))
+
 (defn- print-accounts!
   [accounts]
   (doseq [{:keys [name amount]} accounts]
     (println (format "%-30s\t%s" name amount))))
 
+(defn- write-accounts!
+  [{:keys [google google-sheets]} accounts]
+  (->> #(sheets/write-accounts! % google-sheets accounts)
+       (google/authorize-and-run! google)))
+
 (defn run
   []
-  (let [{:keys [bunq google google-sheets]}
-        (aero/read-config "config.edn")
-        bunq-context          (bunq/authorize! bunq)
-        google-context        (google/authorize! google)
-        accounts              (bunq/list-accounts bunq-context)]
+  (let [config   (aero/read-config "config.edn")
+        accounts (fetch-accounts! config)]
     (print-accounts! accounts)
-    (sheets/write-accounts! google-context google-sheets accounts)))
+    (write-accounts! config accounts)))
 
 (defn -main
   [& _]

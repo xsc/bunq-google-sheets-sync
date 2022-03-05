@@ -2,7 +2,8 @@
   (:require [clojure.java.io :as io])
   (:import (com.google.api.client.auth.oauth2
              AuthorizationCodeFlow
-             Credential)
+             Credential
+             TokenResponseException)
            (com.google.api.client.util.store
              DataStore)
            (com.google.api.client.googleapis.javanet
@@ -36,10 +37,10 @@
 
 ;; ## Local Authorization
 
-(defn authorize-local!
+(defn authorize!
   ^Credential
   ([flow]
-   (authorize-local! flow -1))
+   (authorize! flow -1))
   ([^AuthorizationCodeFlow flow port]
    (-> (AuthorizationCodeInstalledApp.
          flow
@@ -47,3 +48,16 @@
              (.setPort (int port))
              (.build)))
        (.authorize "user"))))
+
+(defn unauthorize!
+  [^AuthorizationCodeFlow flow]
+  (-> (.getCredentialDataStore flow)
+      (.delete "user")))
+
+(defn authorize-and-run!
+  [flow f]
+  (try
+    (f (authorize! flow))
+    (catch TokenResponseException _
+      (unauthorize! flow)
+      (f (authorize! flow)))))
