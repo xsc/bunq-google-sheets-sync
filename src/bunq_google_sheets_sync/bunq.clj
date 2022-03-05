@@ -73,7 +73,7 @@
   ^Credential
   [secrets]
   (-> (create-authorization-flow secrets)
-      (oauth2/authorize-local! 18888)))
+      (oauth2/authorize! 18888)))
 
 ;; ## API Context
 

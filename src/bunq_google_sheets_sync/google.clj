@@ -41,12 +41,12 @@
         (.setCredentialDataStore store)
         (.build))))
 
-(defn authorize!
+(defn authorize-and-run!
   "Given a map of `:client-id`, `:client-secret` and `:redirect-uris`, this
    will initiate a local authorization flow, opening a browser window for
    confirmation, and persisting the credentials locally for reuse."
   ^Credential
-  [secrets]
+  [secrets f]
   (-> (as-google-client-secrets secrets)
       (create-authorization-flow)
-      (oauth2/authorize-local!)))
+      (oauth2/authorize-and-run! f)))
