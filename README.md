@@ -13,9 +13,10 @@ automatically update a household expense tracking sheet.
 You will need to obtain:
 
 * A [Google OAuth2][google-oauth] client ID and client secret, with write access
-  to Google Sheets spreadsheets.
+  to Google Sheets spreadsheets,using `http://localhost:18887/Callback` as
+  redirect URI.
 * A [Bunq OAuth2][bunq-oauth] client ID and client secret, using
-  `http://localhost:18888` as redirect URI.
+  `http://localhost:18888/Callback` as redirect URI.
 * A Google Sheets spreadsheet with your desired target sheet.
 
 [google-oauth]: https://support.google.com/cloud/answer/6158849?hl=en

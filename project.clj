@@ -9,18 +9,18 @@
   :dependencies [[org.clojure/clojure "1.10.3"]
 
                  ;; Google
-                 [com.google.api-client/google-api-client "1.33.2"]
-                 [com.google.http-client/google-http-client "1.41.2"]
-                 [com.google.http-client/google-http-client-jackson2 "1.29.2"]
+                 [com.google.api-client/google-api-client "1.33.4"]
+                 [com.google.http-client/google-http-client "1.41.5"]
+                 [com.google.http-client/google-http-client-jackson2 "1.41.5"]
                  [com.google.apis/google-api-services-sheets "v4-rev12-1.22.0"]
                  [com.google.oauth-client/google-oauth-client "1.33.1"]
                  [com.google.oauth-client/google-oauth-client-jetty "1.33.1"]
 
                  ;; Bunq
-                 [com.github.bunq/sdk_java "1.18.19.21"]
+                 [com.github.bunq/sdk_java "1.19.1.3"]
 
                  ;; Utilities
-                 [com.google.code.gson/gson "2.8.9"]
+                 [com.google.code.gson/gson "2.9.0"]
                  [aero "1.1.6"]]
   :repositories {"jitpack" {:url "https://jitpack.io"}}
   :main bunq-google-sheets-sync.core

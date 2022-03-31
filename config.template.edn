@@ -4,8 +4,7 @@
 
  :google
  {:client-id "GOOGLE_CLIENT_ID"
-  :client-secret "GOOGLE_CLIENT_SECRET"
-  :redirect-uris ["URI 1" "URI 2"]}
+  :client-secret "GOOGLE_CLIENT_SECRET"}
 
  :google-sheets
  {:spreadsheet-id "SPREADSHEET_ID (from URL)"

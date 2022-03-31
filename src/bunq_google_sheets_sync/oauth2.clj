@@ -55,9 +55,11 @@
       (.delete "user")))
 
 (defn authorize-and-run!
-  [flow f]
-  (try
-    (f (authorize! flow))
-    (catch TokenResponseException _
-      (unauthorize! flow)
-      (f (authorize! flow)))))
+  ([flow f]
+   (authorize-and-run! flow f -1))
+  ([flow f port]
+   (try
+     (f (authorize! flow port))
+     (catch TokenResponseException _
+       (unauthorize! flow)
+       (f (authorize! flow port))))))
