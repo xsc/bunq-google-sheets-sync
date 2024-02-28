@@ -15,7 +15,6 @@
              Data);
            (com.bunq.sdk.context ApiContext ApiEnvironmentType BunqContext)
            (com.bunq.sdk.model.generated.endpoint
-             MonetaryAccount
              MonetaryAccountBank
              MonetaryAccountExternal
              MonetaryAccountJoint
@@ -122,9 +121,15 @@
 
 (defn list-accounts
   [_]
-  (->> (for [^MonetaryAccount record (.. (MonetaryAccount/list) (getValue))
-             :let [obj (.getReferencedObject record)]
-             :when (= "ACTIVE" (get-status obj))]
+  (->> (for [obj (concat
+                   (.. (MonetaryAccountBank/list)
+                       (getValue))
+                   (.. (MonetaryAccountJoint/list)
+                       (getValue))
+                   (.. (MonetaryAccountSavings/list)
+                       (getValue)))
+             :when (= "ACTIVE" (get-status obj))
+             ]
          {:name   (get-name obj)
           :amount (get-balance obj)})
        (sort-by :name)))
