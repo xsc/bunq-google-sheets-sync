@@ -14,6 +14,7 @@
            (com.google.api.client.util
              Data);
            (com.bunq.sdk.context ApiContext ApiEnvironmentType BunqContext)
+           (com.bunq.sdk.http BunqResponse)
            (com.bunq.sdk.model.generated.endpoint
              MonetaryAccountBank
              MonetaryAccountExternal
@@ -119,15 +120,16 @@
 (extend-account MonetaryAccountJoint)
 (extend-account MonetaryAccountSavings)
 
+(defn- fetch-raw-accounts
+  []
+  (mapcat #(.getValue ^BunqResponse %)
+          [(MonetaryAccountBank/list)
+           (MonetaryAccountJoint/list)
+           (MonetaryAccountSavings/list)]))
+
 (defn list-accounts
   [_]
-  (->> (for [obj (concat
-                   (.. (MonetaryAccountBank/list)
-                       (getValue))
-                   (.. (MonetaryAccountJoint/list)
-                       (getValue))
-                   (.. (MonetaryAccountSavings/list)
-                       (getValue)))
+  (->> (for [obj (fetch-raw-accounts)
              :when (= "ACTIVE" (get-status obj))
              ]
          {:name   (get-name obj)
